@@ -4,6 +4,7 @@ import {
   Briefcase,
   Cloud,
   CodeXml,
+  Coins,
   Database,
   Globe,
   Layers,
@@ -52,7 +53,7 @@ export type Stat = { icon: LucideIcon; value: string; label: [string, string] };
 export const stats: Stat[] = [
   { icon: Briefcase, value: "1.5+", label: ["Years", "Experience"] },
   { icon: TrendingDown, value: "60%", label: ["Indexing", "Cost cut"] },
-  { icon: Database, value: "50%", label: ["Database", "Cost cut"] },
+  { icon: Coins, value: "42%", label: ["Production", "Cost cut"] },
 ];
 
 export type TechCategory = { icon: LucideIcon; title: string; items: string[] };
