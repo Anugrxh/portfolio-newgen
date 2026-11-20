@@ -1,26 +1,167 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-ink: #0a0606;
+  --color-surface: #120b0b;
+  --color-raised: #1a0f0f;
+  --color-accent: #b3201c;
+  --color-deep: #6e0f0f;
+  --color-glow: rgb(179 32 28 / 0.35);
+  --color-cream: #eadcc6;
+  --color-muted: #9c8f84;
+  --color-line: rgb(234 220 198 / 0.08);
+  --color-line-accent: rgb(179 32 28 / 0.45);
+
+  --font-display: var(--font-anton);
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+  --font-signature: var(--font-signature-script);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  --animate-spin-slow: spin-slow 20s linear infinite;
+
+  @keyframes spin-slow {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+@utility micro {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@utility print-texture {
+  /* faint ink speckle over cream, clipped to the letters */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.04 0 0 0 0 0.02 0 0 0 0 0.02 4 0 0 0 -2.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.3'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #efe3cf 0%, #eadcc6 55%, #d9c8ae 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Desktop: every section is exactly one screen tall (640px floor for very short windows). */
+@utility screen-section {
+  @media (width >= 64rem) {
+    height: max(100svh, 640px);
+  }
+}
+
+/*
+  Desktop hero fits under the top bar (4rem). The giant word spans the full width but is
+  capped at 42% of the hero height on short screens (its letters spread out instead), and
+  the photo, sun and badge are placed from the word's real height. The head sits 21% down
+  the photo; it's placed so the head top meets the middle of the word.
+*/
+@media (width >= 64rem) {
+  .hero {
+    --hero-h: calc(max(100svh, 640px) - 4rem);
+    --word-size: min(29.1cqw, calc(var(--hero-h) * 0.42 / 0.85));
+    --word-h: calc(var(--word-size) * 0.85);
+    height: var(--hero-h);
+  }
+
+  .hero-word {
+    font-size: var(--word-size);
+  }
+
+  .hero-badge {
+    top: calc(var(--word-h) * 0.55);
+    width: clamp(76px, min(10cqw, calc(var(--word-h) * 0.42)), 128px);
+    height: clamp(76px, min(10cqw, calc(var(--word-h) * 0.42)), 128px);
+  }
+
+  .hero-sun {
+    top: calc(var(--word-h) * 0.3);
+    width: min(55cqw, calc(var(--hero-h) - var(--word-h) * 0.3));
+  }
+
+  .hero-image {
+    --image-h: min(63cqw, calc((var(--hero-h) - var(--word-h) / 2) / 0.79));
+    position: absolute;
+    top: calc(var(--word-h) / 2 - 0.21 * var(--image-h));
+    left: 50%;
+    width: auto;
+    height: var(--image-h);
+    aspect-ratio: 2 / 3;
+    margin-top: 0;
+    translate: -50% 0;
+  }
+}
+
+/*
+  Phones: the hero is one screen and ends at the signature. The photo fills the space
+  between the word and the text below it, with the head top at the middle of the word
+  (percentages here are of the stage area above the text).
+*/
+@media (width < 48rem) {
+  .hero {
+    --word-h: 24.735cqw;
+  }
+
+  .hero-sun {
+    top: calc(var(--word-h) * 0.4);
+    width: auto;
+    height: min(92cqw, calc(100% - var(--word-h) * 0.4));
+  }
+
+  .hero-image {
+    --image-h: min(138cqw, calc((100% - var(--word-h) / 2) / 0.79));
+    position: absolute;
+    top: calc(var(--word-h) / 2 - 0.21 * var(--image-h));
+    left: 50%;
+    width: auto;
+    height: var(--image-h);
+    aspect-ratio: 2 / 3;
+    margin-top: 0;
+    translate: -50% 0;
+  }
+}
+
+html {
+  background: var(--color-ink);
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* film grain across the whole page */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-ping {
+    animation: none;
+  }
 }
